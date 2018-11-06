@@ -1,0 +1,80 @@
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div style="width:60%">
+<canvas id="myChart"></canvas>
+</div>
+<script>
+
+window.onload = function() {
+  var data = [12, 19, 3, 17, 6, 3, 7];
+  chart(data);
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      message: '12, 19, 3, 17, 6, 3, 7'
+    },
+    methods: {
+      change: function (event) {
+        alert(this.message);
+        /*if (event) {
+          // BUTTON
+          alert(event.target.tagName);
+        }*/
+        var data = this.message.split(',');
+        chart(data);
+      }
+    }
+  });
+
+  new Vue({
+    el: '#json',
+    data () {
+      return {
+        info: null
+      }
+    },
+    mounted () {
+      axios
+        .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+        .then(response => (this.info = response))
+    }
+  });
+};
+
+var chart = function(data) {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        label: 'apples',
+        data: data,
+        backgroundColor: "rgba(153,255,51,0.4)"
+      }, {
+        label: 'oranges',
+        data: [2, 29, 5, 5, 2, 3, 10],
+        backgroundColor: "rgba(255,153,0,0.4)"
+      }]
+    }
+  });
+};
+
+</script>
+
+<div id="app">
+  <p>{{ message }}</p>
+  <p><input type="text" v-model="message"></p>
+  <button v-on:click="change">view</button>
+</div>
+<div id="json">
+    {{ info }}
+  </div>
+</body>
+</html>
